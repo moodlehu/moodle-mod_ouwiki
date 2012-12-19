@@ -5,7 +5,12 @@ var ouwiki_annotate = {};
 var newWin = null;
 var currentMarker = "";
 
-YAHOO.util.Event.onDOMReady(ouwiki_annotate_init);
+/* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+/* YAHOO.util.Event.onDOMReady(ouwiki_annotate_init); */
+YUI().use('yui2-container', 'yui2-dragdrop', function(Y) {
+	YAHOO = Y.YUI2;
+	ouwiki_annotate_init();
+});
 
 function ouwiki_annotate_init() {
     var save = ouwiki_annotate_config.save;

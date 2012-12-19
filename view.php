@@ -103,10 +103,13 @@ if ($timelocked = ouwiki_timelocked($subwiki, $ouwiki, $context)) {
 
 // init JS module
 if (ajaxenabled()) {
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->yui2_lib('connection');
-    $PAGE->requires->yui2_lib('dom');
-    $PAGE->requires->yui2_lib('annimation');
+        /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+        /*
+    	$PAGE->requires->yui2_lib('event');
+    	$PAGE->requires->yui2_lib('connection');
+    	$PAGE->requires->yui2_lib('dom');
+    	$PAGE->requires->yui2_lib('annimation');
+        */
 
     $stringlist[] = array('typeinsectionname', 'ouwiki');
     $stringlist[] = array('typeinpagename', 'ouwiki');
@@ -115,10 +118,12 @@ if (ajaxenabled()) {
     $module = array(
             'name'      => 'mod_ouwiki',
             'fullpath'  => '/mod/ouwiki/view.js',
-            'requires'  => array('base'),
+            /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+//             'requires'  => array('base'),
+            'requires'  => array('base', 'yui2-event', 'yui2-connection', 'yui2-dom', 'yui2-annimation'),
             'strings'   => $stringlist
     );
-    $PAGE->requires->js_init_call('M.mod_ouwiki.init', array(), false, $module);
+    $PAGE->requires->js_init_call('M.mod_ouwiki.init', null, false, $module);
 }
 
 // Footer

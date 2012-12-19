@@ -23,7 +23,14 @@
 
 var ouwiki_view = {};
 
-YAHOO.util.Event.onDOMReady(init);
+    /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+    /* YAHOO.util.Event.onDOMReady(init); */
+YUI().use('node', 'yui2-event', 'yui2-connection', 'yui2-dom', 'yui2-annimation', function(Y) {
+	YAHOO = Y.YUI2;
+	init();
+});
+
+
 ouwikiAddOnLoad(ouwikiOnLoad);
 
 function ouwikiAddOnLoad(fn) {

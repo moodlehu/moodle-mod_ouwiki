@@ -2527,7 +2527,8 @@ function ouwiki_print_editlock($lock, $ouwiki) {
         $nojs = $nojsstart.$nojsdisabled.' '.$nojswarning.
             '<img src="nojslock.php?lockid='.$lock->id.'" alt=""/></p>';
 
-        $PAGE->requires->yui2_lib(array('yahoo', 'event', 'connection'));
+        /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+        /* $PAGE->requires->yui2_lib(array('yahoo', 'event', 'connection')); */
         $strlockcancelled = ouwiki_javascript_escape(get_string('lockcancelled', 'ouwiki'));
         $intervalms = OUWIKI_LOCK_RECONFIRM * 1000;
 
@@ -2565,6 +2566,10 @@ function ouwiki_print_editlock($lock, $ouwiki) {
         }
 
         print "<script type='text/javascript'>
+            /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+            YUI().use('yui2-event', 'yui2-connection', 'yui2-dom', 'yui2-annimation', function(Y) {
+	            YAHOO = Y.YUI2;
+            });
             var intervalID;
             function handleResponse(o) {
                 if(o.responseText=='cancel') {

@@ -337,8 +337,11 @@ if(ajaxenabled()) {
     $annotateconfig->url = $url->out(true, array());
     $annotateconfig->save = get_string('add');
     $annotateconfig->cancel = get_string('cancel');
-    $PAGE->requires->yui2_lib('container');
-    $PAGE->requires->yui2_lib('dragdrop');
+        /* CODE_CHANGE_HU 2 make ouwiki YUI2in3 proof */
+        /*
+    		$PAGE->requires->yui2_lib('container');
+    		$PAGE->requires->yui2_lib('dragdrop');
+        */
     $PAGE->requires->data_for_js('ouwiki_annotate_config', $annotateconfig);
     $PAGE->requires->js('/mod/ouwiki/annotate.js');
 }
