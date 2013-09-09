@@ -162,7 +162,17 @@ foreach ($changes as $change) {
     } else {
         $viewlink = "viewold.php?$wikiparams&amp;version={$change->versionid}";
         if ($subwiki->canedit && !$pageversion->locked) {
-            $revertlink = " <a href=revert.php?$wikiparams&amp;version={$change->versionid}>".get_string('revert')."</a>";
+        
+/**********************************************************
+ * CODE_CHANGE_HU                                         *
+ * Matthias 		                                      *
+ * Ticket #167                                            *
+ * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 *
+ **********************************************************/
+         // changed string 
+         // $revertlink = " <a href=revert.php?$wikiparams&amp;version={$change->versionid}>".get_string('revert')."</a>";  // orig.
+            $revertlink = " <a href=revert.php?$wikiparams&amp;version={$change->versionid}>".get_string('revert', 'ouwiki')."</a>";
+
         }
     }
 

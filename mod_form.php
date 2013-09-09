@@ -50,6 +50,16 @@ class mod_ouwiki_mod_form extends moodleform_mod {
         // Annotation
         $annotationoptions = array('0' => get_string('no'), '1' => get_string('yes'));
         $mform->addElement('select', 'annotation', get_string('annotationsystem', 'ouwiki'), $annotationoptions);
+ /**********************************************************
+  * CODE_CHANGE_HU 										   *
+  * Matthias 											   *
+  * Ticket #167											   *
+  * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 * 
+  **********************************************************/  
+  		// preselected 'yes'      
+        $mform->setDefault('annotation', '1');  // '1' == yes
+        
+//         $mform->addHelpButton('annotation', 'annotation', 'ouwiki'); // w'sch obsolet ab 2.4
         $mform->addHelpButton('annotation', 'annotationsystem', 'ouwiki');
 
         // Editing timeout

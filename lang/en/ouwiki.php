@@ -525,3 +525,12 @@ $string['brokenimage'] = '<span class="imgremoved"> Missing image, not included 
 
 $string['add']='Add';
 $string['cancel']='Cancel';
+
+/*************************************
+ * CODE_CHANGE_HU - [JE], 2012-11-20 *
+ * /ticket/167#comment:18            *
+ * Lang String not changeable, bug   *
+ * ab 2.4 obsolet, so. -> getstrungs anpassen *
+ *************************************/
+$string['showallannotationsstr'] = 'Show all annotations';  // CODE_CHANGE_HU
+$string['hideallannotationsstr'] = 'Hide all annotations';  // CODE_CHANGE_HU

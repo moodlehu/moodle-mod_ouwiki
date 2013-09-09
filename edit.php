@@ -279,7 +279,17 @@ if (!$lockok) {
     } else {
         $pagelockeddetails = get_string('pagelockeddetails', 'ouwiki', $details);
         if ($lock->expiresat) {
-            $pagelockedtimeout = get_string('pagelockedtimeout', 'ouwiki', userdate($lock->expiresat));
+
+/**********************************************************
+ * CODE_CHANGE_HU                                         *
+ * Matthias 		                                      *
+ * Ticket #167                                            *
+ * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 *
+ **********************************************************/
+ 		 // changed time format
+         // $pagelockedtimeout = get_string('pagelockedtimeout', 'ouwiki', userdate($lock->expiresat));  // orig.
+            $pagelockedtimeout = get_string('pagelockedtimeout', 'ouwiki', userdate($lock->expiresat, get_string('strftimedatetimeshort')));
+            
         }
     }
 
@@ -402,13 +412,20 @@ if ($content) {
 $annotations = ouwiki_get_annotations($pageversion);
 ouwiki_highlight_existing_annotations($existing, $annotations, 'edit');
 
-print get_string('advice_edit', 'ouwiki', $OUTPUT->help_icon('createlinkedwiki', 'ouwiki'));
+/**********************************************************
+ * CODE_CHANGE_HU                                         *
+ * Matthias 		                                      *
+ * Ticket #167                                            *
+ * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 *
+ **********************************************************/
+ // changed order 'if ($ouwiki->timeout) {...'  <==>  'print get_string('advice_edit',..'
 if ($ouwiki->timeout) {
     $countdowntext = get_string('countdowntext', 'ouwiki', $ouwiki->timeout/60);
     print "<script type='text/javascript'>
                 document.write('<p><div id=\"ouw_countdown\"></div>$countdowntext<span id=\"ouw_countdownurgent\"></span></p>');
         </script>";
 }
+print get_string('advice_edit', 'ouwiki', $OUTPUT->help_icon('createlinkedwiki', 'ouwiki'));
 
 // Set up basic form data
 $data = new StdClass;

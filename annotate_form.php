@@ -58,6 +58,15 @@ class mod_ouwiki_annotate_form extends moodleform {
             $mform->addElement('checkbox', 'deleteorphaned', get_string('deleteorphanedannotations', 'ouwiki'));
         }
 
+/**********************************************************
+ * CODE_CHANGE_HU                                         *
+ * Matthias 		                                      *
+ * remove the 'lock wiki page' from annotaion page, which *
+ * is misleading at this point - usability                *
+ * Ticket #167                                            *
+ * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 *
+ **********************************************************/
+ /* 
         if ($canlock) {
             $mform->addElement('checkbox', 'lockediting', get_string('lockediting', 'ouwiki'));
             if (ouwiki_is_page_editing_locked($pageid)) {
@@ -66,6 +75,8 @@ class mod_ouwiki_annotate_form extends moodleform {
                 $mform->setDefault('lockediting', false);
             }
         }
+        */
+
         $this->add_action_buttons();
     }
 

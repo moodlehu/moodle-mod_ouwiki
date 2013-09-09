@@ -85,7 +85,11 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ouw_topheading'));
         $output .= html_writer::start_tag('div', array('class' => 'ouw_heading'));
         $output .= html_writer::tag('h1', format_string($title),
-                array('class' => 'ouw_topheading'));
+
+/* CODE_CHANGE_HU - [MS] - Ticket #167 */
+/* new class name necessary because same name is used for div */
+            ///  array('class' => 'ouw_topheading'));  // orig.
+                array('class' => 'ouw_h1_topheading'));
 
         if ($gewgaws) {
             $output .= $this->render_heading_bit(1, $pageversion->title, $subwiki,
@@ -94,8 +98,44 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
         } else {
             $output .= html_writer::end_tag('div');
         }
+ 
+ 
+/* CODE_CHANGE_HU - [MS] - Ticket #167 */
+/* 'List of recent changes' was here */
 
-        // List of recent changes
+
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::start_tag('div', array('class' => 'ouw_belowmainhead'));
+
+        // spacer
+        $output .= html_writer::start_tag('div', array('class' => 'ouw_topspacer'));
+        $output .= html_writer::end_tag('div');
+
+        // Content of page
+        $output .= ouwiki_convert_content($pageversion->xhtml, $subwiki, $cm, null,
+                $pageversion->xhtmlformat);
+
+        if ($gewgaws) {
+            // Add in links/etc. around headings
+            $ouwikiinternalre->pagename = $pageversion->title;
+            $ouwikiinternalre->subwiki = $subwiki;
+            $ouwikiinternalre->cm = $cm;
+            $ouwikiinternalre->annotations = $annotations;
+            $ouwikiinternalre->locked = $pageversion->locked;
+            $ouwikiinternalre->pageversion = $pageversion;
+            $ouwikiinternalre->files = $files;
+            $output = preg_replace_callback(
+                    '|<h([1-9]) id="ouw_s([0-9]+_[0-9]+)">(.*?)(<br\s*/>)?</h[1-9]>|s',
+                    'ouwiki_internal_re_heading', $output);
+        }
+        $output .= html_writer::start_tag('div', array('class'=>'clearer'));
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::end_tag('div');
+
+
+		/* CODE_CHANGE_HU - [MS] - Ticket #167 */
+		/* 'List of recent changes' moved here */
         if ($gewgaws && $pageversion->recentversions) {
             $output .= html_writer::start_tag('div', array('class' => 'ouw_recentchanges'));
             $output .= get_string('recentchanges', 'ouwiki').': ';
@@ -130,34 +170,7 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
             $output .= html_writer::end_tag('div');
         }
 
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::start_tag('div', array('class' => 'ouw_belowmainhead'));
 
-        // spacer
-        $output .= html_writer::start_tag('div', array('class' => 'ouw_topspacer'));
-        $output .= html_writer::end_tag('div');
-
-        // Content of page
-        $output .= $pageversion->xhtml;
-
-        if ($gewgaws) {
-            // Add in links/etc. around headings.
-            $ouwikiinternalre = new stdClass();
-            $ouwikiinternalre->pagename = $pageversion->title;
-            $ouwikiinternalre->subwiki = $subwiki;
-            $ouwikiinternalre->cm = $cm;
-            $ouwikiinternalre->annotations = $annotations;
-            $ouwikiinternalre->locked = $pageversion->locked;
-            $ouwikiinternalre->pageversion = $pageversion;
-            $ouwikiinternalre->files = $files;
-            $output = preg_replace_callback(
-                    '|<h([1-9]) id="ouw_s([0-9]+_[0-9]+)">(.*?)(<br\s*/>)?</h[1-9]>|s',
-                    'ouwiki_internal_re_heading', $output);
-        }
-        $output .= html_writer::start_tag('div', array('class'=>'clearer'));
-        $output .= html_writer::end_tag('div');
-
-        $output .= html_writer::end_tag('div');
 
         // Render wordcount
         if ($showwordcount) {
@@ -166,28 +179,8 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
 
         $output .= html_writer::end_tag('div');
 
-        // attached files
-        if ($files) {
-            $output .= html_writer::start_tag('div', array('class' => 'ouwiki-post-attachments'));
-            $output .= html_writer::tag('h3', get_string('attachments', 'ouwiki'),
-                    array('class' => 'ouw_topheading'));
-            $output .= html_writer::start_tag('ul');
-            foreach ($files as $file) {
-                $output .= html_writer::start_tag('li');
-                $filename = $file->get_filename();
-                $mimetype = $file->get_mimetype();
-                $iconimage = html_writer::empty_tag('img',
-                        array('src' => $this->output->pix_url(file_mimetype_icon($mimetype)),
-                        'alt' => $mimetype, 'class' => 'icon'));
-                $path = file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $modcontext->id .
-                        '/mod_ouwiki/attachment/' . $pageversion->versionid . '/' . $filename);
-                $output .= html_writer::tag('a', $iconimage, array('href' => $path));
-                $output .= html_writer::tag('a', s($filename), array('href' => $path));
-                $output .= html_writer::end_tag('li');
-            }
-            $output .= html_writer::end_tag('ul');
-            $output .= html_writer::end_tag('div');
-        }
+/* CODE_CHANGE_HU - [MS] - Ticket #167 */
+/* changed order 'pages that link to this page' <==> 'attached files' */
 
         // pages that link to this page
         if ($gewgaws) {
@@ -196,7 +189,12 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
                 $output .= html_writer::start_tag('div', array('class'=>'ouw_linkedfrom'));
                 $output .= html_writer::tag('h3', get_string(
                         count($links) == 1 ? 'linkedfromsingle' : 'linkedfrom', 'ouwiki'),
-                        array('class'=>'ouw_topheading'));
+                       
+    /* CODE_CHANGE_HU - [MS] - Ticket #167 */
+	/* new class name necessary because same name is used for another div */
+                    //  array('class'=>'ouw_topheading'));  // orig.
+                        array('class'=>'ouw_topheading_linkedfrom'));
+                        
                 $output .= html_writer::start_tag('ul');
                 $first = true;
                 foreach ($links as $link) {
@@ -217,6 +215,34 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
                 $output .= html_writer::end_tag('ul');
                 $output .= html_writer::end_tag('div');
             }
+        }
+        
+		// attached files
+        if ($files) {
+            $output .= html_writer::start_tag('div', array('class' => 'ouwiki-post-attachments'));
+            $output .= html_writer::tag('h3', get_string('attachments', 'ouwiki'),
+ 
+    /* CODE_CHANGE_HU - [MS] - Ticket #167 */
+    /* new class name necessary because same name is used for another div */
+                 // array('class' => 'ouw_topheading'));  // orig.
+                    array('class' => 'ouw_topheading_files'));
+
+            $output .= html_writer::start_tag('ul', array('class'=>'ouw_attachedfiles'));
+            foreach ($files as $file) {
+                $output .= html_writer::start_tag('li');
+                $filename = $file->get_filename();
+                $mimetype = $file->get_mimetype();
+                $iconimage = html_writer::empty_tag('img',
+                        array('src' => $this->output->pix_url(file_mimetype_icon($mimetype)),
+                        'alt' => $mimetype, 'class' => 'icon'));
+                $path = file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $modcontext->id .
+                        '/mod_ouwiki/attachment/' . $pageversion->versionid . '/' . $filename);
+                $output .= html_writer::tag('a', $iconimage, array('href' => $path));
+                $output .= html_writer::tag('a', s($filename), array('href' => $path));
+                $output .= html_writer::end_tag('li');
+            }
+            $output .= html_writer::end_tag('ul');
+            $output .= html_writer::end_tag('div');
         }
 
         // disply the orphaned annotations
@@ -247,6 +273,12 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ouw_byheading'));
 
         // Add edit link for page or section
+        /************************************************************
+         * CODE_CHANGE_HU - [JE] 2012-11-19                         *
+         * Ticket #167                                              *
+         * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167   *
+         * Removed redundant 'Edit page' from Wiki-pageheader       *
+         ************************************************************
         if ($subwiki->canedit && !$locked) {
             $str = $xhtmlid ? 'editsection' : 'editpage';
 
@@ -256,16 +288,26 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
                         ($xhtmlid ? '&section=' . $xhtmlid : ''),
                     'class' => 'ouw_' . $str));
         }
+        */
+
 
         // output the annotate link if using annotation system, only for page not section
         if (!$xhtmlid && $subwiki->annotation) {
             // Add annotate link
+            
+        /************************************************************
+         * CODE_CHANGE_HU - [JE] 2012-11-19                         *
+         * Ticket #167                                              *
+         * http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167   *
+         * Removed 'annotate'-Link from Wiki-pageheader             *
+         ************************************************************
             if ($subwiki->canannotate) {
                 $output .= ' ' .html_writer::tag('a', get_string('annotate', 'ouwiki'),
                         array('href' => $CFG->wwwroot.'/mod/ouwiki/annotate.php?' .
                         ouwiki_display_wiki_parameters($pagename, $subwiki, $cm, OUWIKI_PARAMS_URL),
                         'class' => 'ouw_annotate'));
             }
+            */
 
             // 'Expand/collapse all' and 'Show/hide all' annotation controls
             if ($annotations != false) {
@@ -278,10 +320,12 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
                 if (count($annotations) > $orphancount) {
                     // Show and hide annotation icon links. Visibility controlled by CSS.
                     $output .= html_writer::start_tag('span', array('id' => 'showhideannotationicons'));
+                    // $output .= ' '.html_writer::tag('a', get_string('showallannotationsstr', 'ouwiki'), // CODE_CHANGE_HU - ab 2.4. obsolet ?
                     $output .= ' '.html_writer::tag('a', get_string('showannotationicons', 'ouwiki'),
                             array('href' => 'hideannotations.php?hide=0&' . ouwiki_display_wiki_parameters(
                             $pagename, $subwiki, $cm, OUWIKI_PARAMS_URL) . '&sesskey=' . sesskey(),
                             'id' => 'showannotationicons'));
+                    // $output .= html_writer::tag('a', get_string('hideallannotationsstr', 'ouwiki'), // CODE_CHANGE_HU - ab 2.4. obsolet
                     $output .= html_writer::tag('a', get_string('hideannotationicons', 'ouwiki'),
                             array('href' => 'hideannotations.php?hide=1&' . ouwiki_display_wiki_parameters(
                             $pagename, $subwiki, $cm, OUWIKI_PARAMS_URL) . '&sesskey=' . sesskey(),
@@ -595,6 +639,15 @@ class mod_ouwiki_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('div', array('id' => 'ouwiki_indexlinks'));
             $output .= html_writer::start_tag('ul');
 
+    /* CODE_CHANGE_HU - [MS] - Ticket #167 */
+    /* permanent link to ouwiki start page */
+                $output .= html_writer::start_tag('li', array('id' => 'ouwiki_nav_start'));
+                $output .= html_writer::tag('a', get_string('startpage', 'ouwiki'),
+                        array('href' => 'view.php?'.
+                        ouwiki_display_wiki_parameters('', $subwiki, $cm, OUWIKI_PARAMS_URL)));
+                $output .= html_writer::end_tag('li');
+    /* CODE_CHANGE_HU_END */
+          
             if ($page == 'wikiindex.php') {
                 $output .= html_writer::start_tag('li', array('id' => 'ouwiki_nav_index'));
                 $output .= html_writer::start_tag('span');

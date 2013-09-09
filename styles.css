@@ -237,9 +237,14 @@ body.jsenabled #ouwiki_belowtabs_annotate_nojs {
     font-size:0.85em;
     color:#888;
 }
+
+/* CODE_CHANGE_HU - Ticket 167 [MS] */
+/*
 #page-mod-ouwiki-wikiindex .ouw_index .ouw_index_startpage .ouw_indexinfo {
     border-bottom:1px dotted #888;
 }
+*/
+
 .ie#page-mod-ouwiki-wikiindex .ouw_index_startpage .ouw_title {
     border-top:2px solid #888;
 }
@@ -353,6 +358,7 @@ body.jsenabled #ouwiki_belowtabs_annotate_nojs {
 #page-mod-ouwiki-view .ouw_annotate,
 #page-mod-ouwiki-view .ouw_editpage,
 #page-mod-ouwiki-view #expandcollapseannotations,
+#page-mod-ouwiki-view #showhideannotations, 
 #page-mod-ouwiki-view #showhideannotationicons {
     margin-right:1em;
 }

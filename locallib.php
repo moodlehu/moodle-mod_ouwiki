@@ -1055,7 +1055,11 @@ function ouwiki_nice_date($time, $insentence = null, $showrecent = null) {
     if (function_exists('specially_shrunken_date')) {
         $result .= specially_shrunken_date($time, $insentence);
     } else {
-        $result .= userdate($time);
+
+		/* CODE_CHANGE_HU - [MS] - Ticket #167 */
+		/* changed date format */
+        // $result .= userdate($time);  // orig.
+           $result .= userdate($time ,get_string('strftimedatetimeshort'));
     }
     $result .= $showrecent ? '</span>' : '';
 
@@ -2421,7 +2425,15 @@ function ouwiki_setup_annotation_markers($xhtmlcontent) {
 function ouwiki_get_annotation_marker($position) {
     global $OUTPUT;
 
-    $icon = '<img src="'.$OUTPUT->pix_url('annotation-marker', 'ouwiki').'" alt="'.
+/**********************************************************
+* CODE_CHANGE_HU                                         *
+* Matthias		                                         *
+* Ticket #167                                            *
+* http://beckett.cms.hu-berlin.de/mlzdev/trac/ticket/167 *
+**********************************************************/
+ // changed annotation marker image
+ // $icon = '<img src="'.$OUTPUT->pix_url('annotation-marker', 'ouwiki').'" alt="'.  // orig.
+    $icon = '<img src="'.$OUTPUT->pix_url('annotation-marker-sand', 'ouwiki').'" alt="'.
             get_string('annotationmarker', 'ouwiki').'" title="'.
             get_string('annotationmarker', 'ouwiki').'" />';
     return '<span class="ouwiki-annotation-marker" id="marker'.$position.'">'.$icon.'</span>';
